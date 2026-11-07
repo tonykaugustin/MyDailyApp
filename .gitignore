@@ -1,0 +1,15 @@
+# Node.js
+node_modules/
+npm-debug.log
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# macOS/Windows/Linux System Files
+.DS_Store
+Thumbs.db
+Desktop.ini   
