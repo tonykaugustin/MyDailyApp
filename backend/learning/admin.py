@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import LearningProgress, StudySession
 
-# Register your models here.
+admin.site.register(LearningProgress)
+admin.site.register(StudySession)
