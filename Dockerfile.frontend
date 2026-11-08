@@ -1,0 +1,31 @@
+# Production build for MyDaily Frontend (Nuxt)
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package descriptors and install dependencies
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
+
+# Copy frontend source code
+COPY frontend/ ./
+
+# Build Nuxt production output
+RUN npm run build
+
+# Production runtime container
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+ENV NODE_ENV=production \
+    PORT=3000 \
+    HOST=0.0.0.0
+
+# Copy output from builder stage
+COPY --from=builder /app/.output /app/.output
+
+EXPOSE 3000
+
+# Start production Node Nitro server
+CMD ["node", ".output/server/index.mjs"]
+

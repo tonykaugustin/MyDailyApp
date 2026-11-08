@@ -1,15 +1,26 @@
 # Node.js
 node_modules/
+.nuxt/
+.output/
 npm-debug.log
 .env
+.env.*.local
+frontend/.env
 
 # Python
 __pycache__/
 *.py[cod]
 venv/
 .env
+backend/.env
+*.log
+logs/
+backend/logs/
+
+# Build and Static files
+backend/staticfiles/
 
 # macOS/Windows/Linux System Files
 .DS_Store
 Thumbs.db
-Desktop.ini   
+Desktop.ini

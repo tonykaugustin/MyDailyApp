@@ -1,0 +1,33 @@
+# Multi-stage production build for MyDaily Backend
+FROM python:3.11-slim as backend
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    DJANGO_SETTINGS_MODULE=mydaily_backend.settings \
+    DJANGO_DEBUG=False
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install python dependencies
+COPY backend/requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy backend application source
+COPY backend/ /app/
+
+# Collect static files into staticfiles/
+RUN python manage.py collectstatic --noinput
+
+# Expose DRF API port
+EXPOSE 8000
+
+# Run with Gunicorn production WSGI server
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "--threads", "2", "mydaily_backend.wsgi:application"]
+
