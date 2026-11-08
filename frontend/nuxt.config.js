@@ -11,10 +11,13 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://127.0.0.1:8000/api'
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api'
     }
   },
   routeRules: {
+    // Proxy all /api requests directly to Django backend on port 8000
+    // This allows Android / mobile and remote LAN devices to use the existing port 3000 connection seamlessly
+    '/api/**': { proxy: 'http://127.0.0.1:8000/api/**' },
     '/_nuxt/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
     '/favicon.svg': { headers: { 'cache-control': 'public, max-age=86400' } },
     '/manifest.json': { headers: { 'cache-control': 'public, max-age=86400' } },

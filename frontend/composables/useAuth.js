@@ -8,7 +8,19 @@ const isInitialized = ref(false)
 
 export const useAuth = () => {
   const config = useRuntimeConfig()
-  const apiBase = config.public.apiBase || 'http://127.0.0.1:8000/api'
+
+  const getApiBase = () => {
+    let base = config.public.apiBase || '/api'
+    if (typeof window !== 'undefined' && window.location && window.location.hostname) {
+      const host = window.location.hostname
+      if (host !== 'localhost' && host !== '127.0.0.1') {
+        if (base.includes('127.0.0.1') || base.includes('localhost')) {
+          base = '/api'
+        }
+      }
+    }
+    return base.replace(/\/$/, '')
+  }
 
   const isAuthenticated = computed(() => !!token.value)
 
@@ -37,8 +49,9 @@ export const useAuth = () => {
 
   const login = async (username, password) => {
     isLoading.value = true
+    const base = getApiBase()
     try {
-      const res = await fetch(`${apiBase}/auth/login/`, {
+      const res = await fetch(`${base}/auth/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -58,8 +71,9 @@ export const useAuth = () => {
 
   const register = async (username, email, password, displayName) => {
     isLoading.value = true
+    const base = getApiBase()
     try {
-      const res = await fetch(`${apiBase}/auth/register/`, {
+      const res = await fetch(`${base}/auth/register/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -83,8 +97,9 @@ export const useAuth = () => {
 
   const fetchUser = async () => {
     if (!token.value) return null
+    const base = getApiBase()
     try {
-      const res = await fetch(`${apiBase}/auth/me/`, {
+      const res = await fetch(`${base}/auth/me/`, {
         headers: { 'Authorization': `Bearer ${token.value}` }
       })
       if (res.ok) {
@@ -107,8 +122,9 @@ export const useAuth = () => {
 
   const refreshAccessToken = async () => {
     if (!refreshToken.value) return false
+    const base = getApiBase()
     try {
-      const res = await fetch(`${apiBase}/auth/token/refresh/`, {
+      const res = await fetch(`${base}/auth/token/refresh/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh: refreshToken.value })
@@ -139,8 +155,9 @@ export const useAuth = () => {
 
   const seedStarterData = async () => {
     if (!token.value) return
+    const base = getApiBase()
     try {
-      const res = await fetch(`${apiBase}/auth/seed-data/`, {
+      const res = await fetch(`${base}/auth/seed-data/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -163,10 +180,10 @@ export const useAuth = () => {
     initAuth,
     login,
     register,
-    logout,
     fetchUser,
     refreshAccessToken,
-    seedStarterData
+    logout,
+    seedStarterData,
+    apiBase: getApiBase
   }
 }
-

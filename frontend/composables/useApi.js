@@ -1,10 +1,25 @@
 export const useApi = () => {
   const config = useRuntimeConfig()
-  const apiBase = config.public.apiBase || 'http://127.0.0.1:8000/api'
+
+  const getApiBase = () => {
+    let base = config.public.apiBase || '/api'
+    if (typeof window !== 'undefined' && window.location && window.location.hostname) {
+      const host = window.location.hostname
+      if (host !== 'localhost' && host !== '127.0.0.1') {
+        if (base.includes('127.0.0.1') || base.includes('localhost')) {
+          base = '/api'
+        }
+      }
+    }
+    return base.replace(/\/$/, '')
+  }
+
   const { token, refreshAccessToken, logout } = useAuth()
 
   const request = async (endpoint, options = {}) => {
-    const url = endpoint.startsWith('http') ? endpoint : `${apiBase}${endpoint.startsWith('/') ? '' : '/'}${endpoint}`
+    const base = getApiBase()
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
+    const url = endpoint.startsWith('http') ? endpoint : `${base}${cleanEndpoint}`
     
     const headers = {
       'Content-Type': 'application/json',
@@ -52,7 +67,6 @@ export const useApi = () => {
     patch: (endpoint, body, options) => request(endpoint, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
     put: (endpoint, body, options) => request(endpoint, { ...options, method: 'PUT', body: JSON.stringify(body) }),
     delete: (endpoint, options) => request(endpoint, { ...options, method: 'DELETE' }),
-    apiBase
+    apiBase: getApiBase
   }
 }
-
