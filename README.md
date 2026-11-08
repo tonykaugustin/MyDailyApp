@@ -136,7 +136,27 @@ chmod +x start-production.sh
 ```
 This runs Gunicorn with 3 workers and the Nuxt production Node server.
 
-#### Option 4: 100% Static Frontend Hosting (Cloudflare Pages, Vercel, Netlify)
+#### Option 4: Android Phone as Server (via Termux)
+Host MyDaily directly on your Android device so any laptop, tablet, or PC on your Wi-Fi can connect to it:
+```bash
+# 1. First-time setup on Android:
+chmod +x termux-setup.sh termux-server.sh
+./termux-setup.sh
+
+# 2. Start as a background server (persists with screen off):
+./termux-server.sh start
+
+# 3. Check status & get your phone's Wi-Fi URL:
+./termux-server.sh status
+
+# 4. View logs or stop:
+./termux-server.sh logs
+./termux-server.sh stop
+```
+- Access from your Android phone: `http://localhost:3000`
+- Access from your laptop/PC on the same Wi-Fi: `http://<phone-ip>:3000` (auto-displayed by `./termux-server.sh status`).
+
+#### Option 5: 100% Static Frontend Hosting (Cloudflare Pages, Vercel, Netlify)
 Generate pure static HTML/JS/CSS assets:
 ```bash
 cd frontend
