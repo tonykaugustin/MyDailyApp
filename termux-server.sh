@@ -285,10 +285,11 @@ stop_server() {
 }
 
 # Show status
+
 status_server() {
-    echo "========================================================"
-    echo "                 MYDAILY STATUS                         "
-    echo "========================================================"
+    echo "========================================"
+    echo "             MYDAILY STATUS"
+    echo "========================================"
 
     if port_is_active "$FRONTEND_PORT"; then
         echo "Frontend: RUNNING (port $FRONTEND_PORT)"
@@ -313,8 +314,9 @@ status_server() {
         echo "Wi-Fi URL: http://$(get_phone_ip):$FRONTEND_PORT"
     fi
 
-    echo "========================================================"
+    echo "========================================"
 }
+
 
 # Display live logs
 logs_server() {
